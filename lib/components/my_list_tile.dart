@@ -17,32 +17,44 @@ class MyListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Slidable(
-      endActionPane: ActionPane(
-        motion: const StretchMotion(),
-        children: [
-          // settings option
-          SlidableAction(
-            onPressed: onEditPressed,
-            icon: Icons.settings,
-            backgroundColor: Colors.grey,
-            foregroundColor: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-          ),
-
-          // delete option
-          SlidableAction(
-            onPressed: onDeletePressed,
-            icon: Icons.delete,
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
-            borderRadius: BorderRadius.circular(4),
-          )
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        vertical: 5,
+        horizontal: 25,
       ),
-      child: ListTile(
-        title: Text(title),
-        trailing: Text(trailing),
+      child: Slidable(
+        endActionPane: ActionPane(
+          motion: const StretchMotion(),
+          children: [
+            // Edit option
+            SlidableAction(
+              onPressed: onEditPressed,
+              icon: Icons.settings, // Теперь исправлено
+              backgroundColor: Colors.grey,
+              foregroundColor: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
+
+            // Delete option
+            SlidableAction(
+              onPressed: onDeletePressed,
+              icon: Icons.delete, // Теперь исправлено
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ],
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: ListTile(
+            title: Text(title),
+            trailing: Text(trailing),
+          ),
+        ),
       ),
     );
   }

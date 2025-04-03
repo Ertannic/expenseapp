@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 
 class ExpenseDatabase extends ChangeNotifier {
   static late Isar isar;
-  List<Expense> _allExpenses = [];
+  final List<Expense> _allExpenses = [];
 
   /* 
   
@@ -90,4 +90,95 @@ class ExpenseDatabase extends ChangeNotifier {
   H E L P E R
  
   */
+
+  // calculate total expenses for each monoth
+
+  /* 
+  
+  {
+    0: $250, jan
+    1: $200, feb
+    2: $175, mar
+    ...
+    11: $240, dec
+  }
+ 
+  */
+
+
+
+  Future<Map<String, double>> calculateMonthlyTotals() async {
+    // ensure the expense are read from the db
+    await readExpenses();
+
+    // create a map to keep track of total expenses per month,year
+    Map<String, double> monthlyTotals = {};
+
+    // iterate over all expenses
+    for (var expense in _allExpenses) {
+      // extratch the year & month from the date of the expense
+      String yearMonth = '${expense.date.year}-${expense.date.month}';
+
+      // if the month is not yet in the map, initialize to 0
+      if (!monthlyTotals.containsKey(yearMonth)) {
+        monthlyTotals[yearMonth] = 0;
+      }
+
+      // add the expense amount to the total for the month
+      monthlyTotals[yearMonth] = monthlyTotals[yearMonth]! + expense.amount;
+    }
+
+    return monthlyTotals;
+  }
+
+  // calculate current month total
+  Future<double> calcualteCurrentMonthTotal() async {
+    // ensure expenses are read from db first
+    await readExpenses();
+
+    // get current month, year
+    int currentMonth = DateTime.now().month;
+    int currentYear = DateTime.now().year;
+
+    // filter the expenses to include only those for this month this year
+    List<Expense> currentMonthExpenses = _allExpenses.where((expense) {
+      return expense.date.month == currentMonth &&
+          expense.date.year == currentYear;
+    }).toList();
+
+    // calculate total amount for the current month
+    double total = currentMonthExpenses.fold(0, (sum, expense) => sum + expense.amount);
+
+    return total;
+  }
+
+  // get start month
+  int getStartMonth() {
+    if (_allExpenses.isEmpty) {
+      return DateTime.now()
+          .month; // default to current month is no expenses are reacoded
+    }
+
+    // sort expenses by date to find the earliest
+    _allExpenses.sort(
+      (a, b) => a.date.compareTo(b.date),
+    );
+
+    return _allExpenses.first.date.month;
+  }
+
+  // get start year
+  int getStartYear() {
+    if (_allExpenses.isEmpty) {
+      return DateTime.now()
+          .year; // default to current month is no expenses are reacoded
+    }
+
+    // sort expenses by date to find the earliest
+    _allExpenses.sort(
+      (a, b) => a.date.compareTo(b.date),
+    );
+
+    return _allExpenses.first.date.year;
+  }
 }
